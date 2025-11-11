@@ -152,7 +152,7 @@ const float axesVertexData[] = {
 
 int main(int argc, char** argv)
 {
-    width = 800;
+    width = 1200;
     height = 800;
 
     glutInit(&argc, argv);
