@@ -21,8 +21,6 @@ GLint width, height;
 GLuint shaderProgram;
 GLuint vertexShader;
 GLuint fragmentShader;
-GLuint cubeVAO, cubeVBO, cubeEBO;
-GLuint axesVAO, axesVBO;
 
 GLvoid Keyboard(unsigned char key, int x, int y);
 
@@ -55,24 +53,6 @@ void drawScene() {
 
     glUseProgram(shaderProgram);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-    unsigned int modelLocation = glGetUniformLocation(shaderProgram, "modelTransform");
-    glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
-
-
-    glBindVertexArray(axesVAO);
-    glDrawArrays(GL_LINES, 0, 6);
-
-    glBindVertexArray(cubeVAO);
-    for (int i = 0; i < 6; i++)
-    {
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(i * 6 * sizeof(unsigned int)));
-    }
-
     glutSwapBuffers();
 }
 
@@ -82,73 +62,6 @@ GLvoid Reshape(int w, int h)
     height = h;
     glViewport(0, 0, width, height);
 }
-
-const float cubeVertexData[] = {
-    // 앞면 (빨간색) - 면 1
-    -0.3f, -0.3f,  0.3f,    1.0f, 0.0f, 0.0f,  // 0
-     0.3f, -0.3f,  0.3f,    1.0f, 0.0f, 0.0f,  // 1
-     0.3f,  0.3f,  0.3f,    1.0f, 0.0f, 0.0f,  // 2
-    -0.3f,  0.3f,  0.3f,    1.0f, 0.0f, 0.0f,  // 3
-
-    // 뒷면 (초록색) - 면 2
-    -0.3f, -0.3f, -0.3f,    0.0f, 1.0f, 0.0f,  // 4
-     0.3f, -0.3f, -0.3f,    0.0f, 1.0f, 0.0f,  // 5
-     0.3f,  0.3f, -0.3f,    0.0f, 1.0f, 0.0f,  // 6
-    -0.3f,  0.3f, -0.3f,    0.0f, 1.0f, 0.0f,  // 7
-
-    // 왼쪽면 (파란색) - 면 3
-    -0.3f, -0.3f, -0.3f,    0.0f, 0.0f, 1.0f,  // 8
-    -0.3f, -0.3f,  0.3f,    0.0f, 0.0f, 1.0f,  // 9
-    -0.3f,  0.3f,  0.3f,    0.0f, 0.0f, 1.0f,  // 10
-    -0.3f,  0.3f, -0.3f,    0.0f, 0.0f, 1.0f,  // 11
-
-    // 오른쪽면 (노란색) - 면 4
-     0.3f, -0.3f, -0.3f,    1.0f, 1.0f, 0.0f,  // 12
-     0.3f, -0.3f,  0.3f,    1.0f, 1.0f, 0.0f,  // 13
-     0.3f,  0.3f,  0.3f,    1.0f, 1.0f, 0.0f,  // 14
-     0.3f,  0.3f, -0.3f,    1.0f, 1.0f, 0.0f,  // 15
-
-     // 위쪽면 (자홍색) - 면 5
-     -0.3f,  0.3f, -0.3f,    1.0f, 0.0f, 1.0f,  // 16
-      0.3f,  0.3f, -0.3f,    1.0f, 0.0f, 1.0f,  // 17
-      0.3f,  0.3f,  0.3f,    1.0f, 0.0f, 1.0f,  // 18
-     -0.3f,  0.3f,  0.3f,    1.0f, 0.0f, 1.0f,  // 19
-
-     // 아래쪽면 (청록색) - 면 6
-     -0.3f, -0.3f, -0.3f,    0.0f, 1.0f, 1.0f,  // 20
-      0.3f, -0.3f, -0.3f,    0.0f, 1.0f, 1.0f,  // 21
-      0.3f, -0.3f,  0.3f,    0.0f, 1.0f, 1.0f,  // 22
-     -0.3f, -0.3f,  0.3f,    0.0f, 1.0f, 1.0f   // 23
-};
-
-// 육면체 인덱스 (각 면별로 분리)
-const unsigned int cubeIndices[] = {
-    // 앞면 (1번 키)
-    0, 1, 2,  2, 3, 0,
-    // 뒷면 (2번 키) 
-    4, 6, 5,  6, 4, 7,
-    // 왼쪽면 (3번 키)
-    8, 9, 10,  10, 11, 8,
-    // 오른쪽면 (4번 키)
-    12, 14, 13,  14, 12, 15,
-    // 위쪽면 (5번 키)
-    16, 17, 18,  18, 19, 16,
-    // 아래쪽면 (6번 키)
-    20, 22, 21,  22, 20, 23
-};
-
-// 좌표축 vertex 데이터
-const float axesVertexData[] = {
-    // X축 (빨간색)
-    -1.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-     1.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-     // Y축 (초록색)
-      0.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
-      0.0f,  1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
-      // Z축 (파란색)
-       0.0f, 0.0f, -1.0f,   0.0f, 0.0f, 1.0f,
-       0.0f, 0.0f,  1.0f,   0.0f, 0.0f, 1.0f
-};
 
 int main(int argc, char** argv)
 {
@@ -253,7 +166,7 @@ GLuint make_shaderProgram()
 
 void initBuffer()
 {
-    // 육면체 VAO, VBO, EBO 설정
+    /* 육면체 VAO, VBO, EBO 설정
     glGenVertexArrays(1, &cubeVAO);
     glBindVertexArray(cubeVAO);
 
@@ -269,17 +182,5 @@ void initBuffer()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    // 좌표축 VAO, VBO 설정
-    glGenVertexArrays(1, &axesVAO);
-    glBindVertexArray(axesVAO);
-
-    glGenBuffers(1, &axesVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, axesVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(axesVertexData), axesVertexData, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    */
 }
